@@ -109,16 +109,55 @@
     .how-card span { color: var(--teal); font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; }
     .how-card h3 { margin: 7px 0; font-size: 21px; }
     .how-card p { margin: 0; color: var(--muted); }
-    .module-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
-    .module-card {
-      background: var(--paper); border: 1px solid var(--line); border-radius: 24px; padding: 24px;
-      display: grid; grid-template-columns: auto 1fr; gap: 18px; position: relative; overflow: hidden;
+    .route-board {
+      position: relative; overflow: hidden; padding: clamp(22px,4vw,46px);
+      border: 1px solid var(--line); border-radius: 30px; background:
+        radial-gradient(circle at 12% 8%,rgba(8,125,120,.09),transparent 24%),
+        radial-gradient(circle at 88% 92%,rgba(217,120,30,.10),transparent 25%),#fff;
+      box-shadow: var(--shadow);
     }
-    .module-card.complete { border-color: #9acdb6; background: linear-gradient(145deg,#fff 60%,#edf8f3); }
-    .module-no { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 15px; color: #fff; background: var(--navy); font-weight: 900; font-size: 19px; }
-    .module-card.complete .module-no { background: var(--success); }
-    .module-card h3 { margin: 0 0 7px; font-size: 23px; line-height: 1.15; }
-    .module-card p { color: var(--muted); margin: 0 0 16px; }
+    .route-briefing {
+      max-width: 700px; margin: 0 auto 34px; padding: 20px 22px; text-align: center;
+      border: 1px solid #c9deed; border-radius: 20px; background: var(--blue-soft);
+    }
+    .route-briefing h3 { margin: 4px 0 6px; font-size: 22px; color: var(--navy); }
+    .route-briefing p { margin: 0; color: var(--muted); }
+    .route-alert { max-width: 760px; margin: 0 auto 28px; padding: 16px 20px; color: #124c38; background: var(--success-soft); border: 1px solid #aad6c2; border-radius: 16px; text-align: center; font-weight: 800; }
+    .route-map { position: relative; max-width: 920px; margin: 0 auto; }
+    .route-map::before {
+      content: ""; position: absolute; left: 50%; top: 18px; bottom: 70px; width: 8px; transform: translateX(-50%);
+      border-radius: 999px; background: repeating-linear-gradient(to bottom,var(--teal) 0 17px,#b9ddd9 17px 28px);
+      box-shadow: 0 0 0 8px rgba(8,125,120,.07);
+    }
+    .route-stage { position: relative; min-height: 190px; display: grid; grid-template-columns: 1fr 96px 1fr; align-items: center; }
+    .route-stage:nth-child(odd) .route-card { grid-column: 1; }
+    .route-stage:nth-child(even) .route-card { grid-column: 3; }
+    .route-stage:nth-child(odd) .route-card::after { right: -17px; border-left: 17px solid var(--paper); }
+    .route-stage:nth-child(even) .route-card::after { left: -17px; border-right: 17px solid var(--paper); }
+    .route-card {
+      position: relative; padding: 22px; background: var(--paper); border: 2px solid var(--line); border-radius: 21px;
+      box-shadow: 0 12px 28px rgba(11,41,71,.08); transition: transform .18s ease,box-shadow .18s ease;
+    }
+    .route-card::after { content: ""; position: absolute; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 14px solid transparent; border-bottom: 14px solid transparent; }
+    .route-card.current { border-color: var(--amber); box-shadow: 0 16px 36px rgba(217,120,30,.18); }
+    .route-card.complete { border-color: #8fc9ae; background: linear-gradient(145deg,#fff 55%,#edf8f3); }
+    .route-card.locked { background: #f2f5f7; border-color: #dbe3e9; box-shadow: none; }
+    .route-card h3 { margin: 5px 0 8px; font-size: 22px; line-height: 1.16; }
+    .route-card p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+    .route-card.locked h3,.route-card.locked p { color: #778593; }
+    .route-status { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11px; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; }
+    .route-status.current { color: #9a5213; }
+    .route-status.complete { color: var(--success); }
+    .route-status.locked { color: #6d7985; }
+    .route-marker { z-index: 3; grid-column: 2; grid-row: 1; justify-self: center; display: grid; place-items: center; width: 66px; height: 66px; border: 8px solid #fff; border-radius: 50%; color: #fff; background: #8998a6; box-shadow: 0 8px 24px rgba(11,41,71,.18); font-weight: 950; font-size: 18px; }
+    .route-marker.current { background: var(--amber); animation: routePulse 2.2s infinite; }
+    .route-marker.complete { background: var(--success); }
+    .route-marker.final { background: var(--navy); }
+    .route-marker.final.current { background: var(--amber); }
+    .route-marker.final.complete { background: var(--success); }
+    .route-card .btn { margin-top: 3px; }
+    .route-destination { margin-top: 12px; }
+    @keyframes routePulse { 0%,100%{box-shadow:0 0 0 0 rgba(217,120,30,.25),0 8px 24px rgba(11,41,71,.18)} 50%{box-shadow:0 0 0 13px rgba(217,120,30,0),0 8px 24px rgba(11,41,71,.18)} }
     .module-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 17px; }
     .pill { display: inline-flex; padding: 6px 10px; border: 1px solid var(--line); background: #f7f9fa; color: var(--muted); border-radius: 999px; font-size: 12px; font-weight: 800; }
     .pill.done { background: var(--success-soft); border-color: #b6ddca; color: var(--success); }
@@ -189,7 +228,7 @@
       .header-inner { grid-template-columns: 1fr auto; }
       .header-progress { grid-row: 2; grid-column: 1 / -1; }
       .framework, .course-facts { grid-template-columns: repeat(2,minmax(0,1fr)); }
-      .module-grid, .how-grid { grid-template-columns: 1fr; }
+      .how-grid { grid-template-columns: 1fr; }
       .diagram { grid-template-columns: repeat(3,1fr); }
       .diagram div::after { display: none; }
       .case-data { grid-template-columns: 1fr; }
@@ -203,11 +242,19 @@
       .hero { border-radius: 22px; padding: 32px 22px; }
       h1 { font-size: 42px; }
       .course-facts, .framework { grid-template-columns: 1fr; }
-      .module-card { grid-template-columns: 1fr; }
       .diagram { grid-template-columns: 1fr 1fr; }
       .module-top { display: block; }
       .footer-inner { display: block; }
     }
+    @media (max-width: 720px) {
+      .route-board { padding: 24px 14px; }
+      .route-map::before { left: 33px; }
+      .route-stage { min-height: 0; display: block; padding: 0 0 26px 76px; }
+      .route-marker { position: absolute; left: 0; top: 18px; width: 66px; height: 66px; }
+      .route-stage .route-card { min-height: 150px; }
+      .route-stage:nth-child(odd) .route-card::after,.route-stage:nth-child(even) .route-card::after { left: -17px; right: auto; border-left: 0; border-right: 17px solid var(--paper); }
+    }
+    @media (prefers-reduced-motion: reduce) { html{scroll-behavior:auto}.route-marker.current{animation:none}.btn{transition:none} }
     @media print {
       .site-header, .site-footer, .module-nav, .hero-actions, .btn { display: none !important; }
       body { background: #fff; }
@@ -725,6 +772,11 @@
     const STORAGE_KEY = "aviation-sustainability-course-v2";
     const defaultState = { completed: [], cases: {}, checks: {}, finalAnswers: {}, finalScore: null, passed: false };
     let state = loadState();
+    let recentlyCompleted = null;
+    state.completed = MODULES.reduce((list,m) => {
+      if (list.length === m.id - 1 && state.completed.includes(m.id)) list.push(m.id);
+      return list;
+    },[]);
 
     function loadState(){
       try { return {...defaultState, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}")}; }
@@ -741,6 +793,7 @@
     }
     function go(hash){ location.hash = hash; }
     function moduleComplete(id){ return state.completed.includes(id); }
+    function moduleUnlocked(id){ return id === 1 || MODULES.slice(0,id-1).every(m => moduleComplete(m.id)); }
     function renderOverview(){
       const next = MODULES.find(m => !moduleComplete(m.id));
       const startTarget = next ? `module-${next.id}` : "assessment";
@@ -777,38 +830,57 @@
           <section class="how-grid">
             <article class="how-card"><span>Step 1</span><h3>Build the theory</h3><p>Each module explains the concept in plain language and connects it to aviation decisions.</p></article>
             <article class="how-card"><span>Step 2</span><h3>Make a decision</h3><p>Use scenario data to choose an option and read feedback on every alternative.</p></article>
-            <article class="how-card"><span>Step 3</span><h3>Prove understanding</h3><p>Answer the checkpoint correctly to complete the module and unlock the final assessment.</p></article>
+            <article class="how-card"><span>Step 3</span><h3>Unlock the next stop</h3><p>Resolve the aviation decision and checkpoint correctly. Only then does the next milestone become available.</p></article>
           </section>
 
-          <div class="section-head"><div><span class="eyebrow">Course map</span><h2>The learning sequence</h2></div><p>Progress is stored in this browser. You can leave and return without losing completed modules.</p></div>
-          <section class="module-grid" aria-label="Course modules">
-            ${MODULES.map(m => `
-              <article class="module-card ${moduleComplete(m.id)?"complete":""}">
-                <div class="module-no">${moduleComplete(m.id)?"✓":String(m.id).padStart(2,"0")}</div>
-                <div>
-                  <h3>${escapeHtml(m.title)}</h3>
-                  <p>${escapeHtml(m.subtitle)}</p>
-                  <div class="module-meta"><span class="pill">${escapeHtml(m.duration)}</span><span class="pill">Theory + decision</span>${moduleComplete(m.id)?'<span class="pill done">Completed</span>':""}</div>
-                  <button class="btn ${moduleComplete(m.id)?"":"btn-primary"}" type="button" data-go="module-${m.id}">${moduleComplete(m.id)?"Review module":"Open module"}</button>
-                </div>
-              </article>`).join("")}
+          <div class="section-head"><div><span class="eyebrow">Progressive route</span><h2>Your learning flightpath</h2></div><p>The stops are sequential. Complete the active milestone to unlock the next one; future stops cannot be opened early.</p></div>
+          <section class="route-board" aria-label="Sequential course route">
+            ${recentlyCompleted ? `<div class="route-alert" role="status">Milestone ${recentlyCompleted} completed. ${recentlyCompleted < MODULES.length ? `Stop ${recentlyCompleted+1} is now unlocked.` : "The final assessment is now unlocked."}</div>` : ""}
+            <div class="route-briefing"><span class="route-status current">Departure briefing</span><h3>Advance one stop at a time</h3><p>At every stop: study the theory, solve the applied decision and pass the checkpoint. Your progress is stored in this browser.</p></div>
+            <div class="route-map">
+              ${MODULES.map(m => {
+                const complete = moduleComplete(m.id);
+                const unlocked = moduleUnlocked(m.id);
+                const current = unlocked && !complete;
+                const status = complete ? "Completed" : current ? "Current stop" : "Locked — complete the previous stop";
+                const cls = complete ? "complete" : current ? "current" : "locked";
+                return `<div class="route-stage">
+                  <article class="route-card ${cls}">
+                    <span class="route-status ${cls}">${status}</span>
+                    <h3>Stop ${m.id} · ${escapeHtml(m.title)}</h3>
+                    <p>${escapeHtml(m.subtitle)}</p>
+                    <div class="module-meta"><span class="pill">${escapeHtml(m.duration)}</span><span class="pill">Theory + decision + checkpoint</span></div>
+                    <button class="btn ${current?"btn-primary":""}" type="button" ${unlocked?`data-go="module-${m.id}"`:"disabled"}>${complete?"Review stop":current?"Enter current stop":"Locked"}</button>
+                  </article>
+                  <div class="route-marker ${cls}" aria-hidden="true">${complete?"✓":current?String(m.id).padStart(2,"0"):"🔒"}</div>
+                </div>`;
+              }).join("")}
+              <div class="route-stage route-destination">
+                <article class="route-card ${state.completed.length===MODULES.length?(state.passed?"complete":"current"):"locked"}">
+                  <span class="route-status ${state.passed?"complete":state.completed.length===MODULES.length?"current":"locked"}">${state.passed?"Journey completed":state.completed.length===MODULES.length?"Final destination unlocked":"Locked — complete all stops"}</span>
+                  <h3>Final destination · Integrated assessment</h3>
+                  <p>Ten questions test whether you can combine all eight decision perspectives. Pass mark: 80%.</p>
+                  <div class="module-meta"><span class="pill">10 questions</span><span class="pill">80% pass mark</span></div>
+                  <button class="btn ${state.completed.length===MODULES.length?"btn-teal":""}" type="button" ${state.completed.length===MODULES.length?'data-go="assessment"':"disabled"}>${state.passed?"View result":state.completed.length===MODULES.length?"Open final assessment":"Locked"}</button>
+                </article>
+                <div class="route-marker final ${state.passed?"complete":state.completed.length===MODULES.length?"current":""}" aria-hidden="true">${state.passed?"✓":"★"}</div>
+              </div>
+            </div>
           </section>
-
-          <div class="section-head"><div><span class="eyebrow">Final consolidation</span><h2>Assessment</h2></div><p>A ten-question assessment checks whether the eight perspectives can be used together. Pass mark: 80%.</p></div>
-          ${state.completed.length === MODULES.length
-            ? `<button class="btn btn-teal" type="button" data-go="assessment">Open final assessment</button>`
-            : `<div class="assessment-lock">Complete all eight module checkpoints to unlock the final assessment. ${state.completed.length} of ${MODULES.length} modules completed.</div>`}
 
           <div class="notice"><strong>Use of scenarios:</strong> A400M and Eurofighter references are illustrative learning contexts. The course does not replace approved technical data, airworthiness decisions, operational procedures or corporate policy.</div>
         </div>`;
+      recentlyCompleted = null;
       bindCommon();
     }
 
     function renderModule(id){
       const m = MODULES.find(x => x.id === id);
       if (!m) return go("overview");
+      if (!moduleUnlocked(id)) return go("overview");
       const caseAnswer = state.cases[id];
       const checkAnswer = state.checks[id];
+      const casePassed = Number(caseAnswer) === m.caseStudy.correct;
       const checkPassed = Number(checkAnswer) === m.check.correct;
       document.getElementById("main").innerHTML = `
         <div class="container module-shell">
@@ -837,14 +909,14 @@
               ${checkAnswer!==undefined?`<div class="feedback ${checkPassed?"good":"bad"}">${checkPassed?escapeHtml(m.check.explain):"Not quite. Review the theory and choose another answer; the correct response must be selected to complete the module."}</div>`:""}
             </section>
             <section class="completion-card">
-              <h2>${moduleComplete(id)?"Module completed":"Complete the module"}</h2>
-              <p>${checkPassed?"Your checkpoint is correct. Save this module as completed.":"Answer the checkpoint correctly to activate completion."}</p>
-              <button class="btn btn-teal" type="button" id="completeModule" ${checkPassed?"":"disabled"}>${moduleComplete(id)?"Completed ✓":"Mark module complete"}</button>
+              <h2>${moduleComplete(id)?"Milestone completed":"Complete this milestone"}</h2>
+              <p>${casePassed && checkPassed?"Both challenges are correct. Confirm completion to unlock the next stop.":"Choose the correct response in both the applied decision and the checkpoint to unlock the next stop."}</p>
+              <button class="btn btn-teal" type="button" id="completeModule" ${casePassed && checkPassed?"":"disabled"}>${moduleComplete(id)?"Completed ✓":"Complete milestone and unlock route"}</button>
             </section>
           </div>
           <nav class="module-nav" aria-label="Module navigation">
             <button class="btn" type="button" data-go="${id===1?"overview":`module-${id-1}`}">← ${id===1?"Overview":"Previous module"}</button>
-            <button class="btn btn-primary" type="button" data-go="${id===MODULES.length?"assessment":`module-${id+1}`}">${id===MODULES.length?"Final assessment":"Next module"} →</button>
+            <button class="btn btn-primary" type="button" ${moduleComplete(id)?`data-go="${id===MODULES.length?"assessment":`module-${id+1}`}"`:"disabled"}>${moduleComplete(id)?(id===MODULES.length?"Final assessment":"Next unlocked stop"):"Complete this stop to continue"} →</button>
           </nav>
         </div>`;
       bindCommon();
@@ -855,10 +927,10 @@
         state.checks[id]=Number(btn.dataset.checkOption); saveState(); renderModule(id); document.getElementById(`check-${id}`).scrollIntoView({behavior:"smooth",block:"center"});
       }));
       document.getElementById("completeModule").addEventListener("click",()=>{
-        if (!checkPassed) return;
-        if (!moduleComplete(id)) state.completed.push(id);
+        if (!casePassed || !checkPassed) return;
+        if (!moduleComplete(id)) { state.completed.push(id); recentlyCompleted = id; }
         state.completed = [...new Set(state.completed)].sort((a,b)=>a-b); saveState();
-        if (id < MODULES.length) go(`module-${id+1}`); else go("assessment");
+        go("overview");
       });
     }
 
