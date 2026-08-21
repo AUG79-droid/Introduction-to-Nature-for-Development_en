@@ -130,10 +130,10 @@
       box-shadow: 0 0 0 8px rgba(8,125,120,.07);
     }
     .route-stage { position: relative; min-height: 190px; display: grid; grid-template-columns: 1fr 96px 1fr; align-items: center; }
-    .route-stage:nth-child(odd) .route-card { grid-column: 1; }
-    .route-stage:nth-child(even) .route-card { grid-column: 3; }
-    .route-stage:nth-child(odd) .route-card::after { right: -17px; border-left: 17px solid var(--paper); }
-    .route-stage:nth-child(even) .route-card::after { left: -17px; border-right: 17px solid var(--paper); }
+    .route-stage.side-left .route-card { grid-column: 1; }
+    .route-stage.side-right .route-card { grid-column: 3; }
+    .route-stage.side-left .route-card::after { right: -17px; border-left: 17px solid var(--paper); }
+    .route-stage.side-right .route-card::after { left: -17px; border-right: 17px solid var(--paper); }
     .route-card {
       position: relative; padding: 22px; background: var(--paper); border: 2px solid var(--line); border-radius: 21px;
       box-shadow: 0 12px 28px rgba(11,41,71,.08); transition: transform .18s ease,box-shadow .18s ease;
@@ -157,6 +157,13 @@
     .route-marker.final.complete { background: var(--success); }
     .route-card .btn { margin-top: 3px; }
     .route-destination { margin-top: 12px; }
+    .route-visual {
+      position: relative; z-index: 4; width: min(760px,88%); margin: 4px auto 34px; overflow: hidden;
+      border: 8px solid #fff; border-radius: 24px; background: var(--navy); box-shadow: 0 18px 40px rgba(11,41,71,.18);
+    }
+    .route-visual img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+    .route-visual figcaption { padding: 14px 18px 16px; color: #eaf4fa; background: var(--navy); font-size: 14px; line-height: 1.45; }
+    .route-visual figcaption strong { display: block; color: #fff; margin-bottom: 2px; }
     @keyframes routePulse { 0%,100%{box-shadow:0 0 0 0 rgba(217,120,30,.25),0 8px 24px rgba(11,41,71,.18)} 50%{box-shadow:0 0 0 13px rgba(217,120,30,0),0 8px 24px rgba(11,41,71,.18)} }
     .module-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 17px; }
     .pill { display: inline-flex; padding: 6px 10px; border: 1px solid var(--line); background: #f7f9fa; color: var(--muted); border-radius: 999px; font-size: 12px; font-weight: 800; }
@@ -252,7 +259,8 @@
       .route-stage { min-height: 0; display: block; padding: 0 0 26px 76px; }
       .route-marker { position: absolute; left: 0; top: 18px; width: 66px; height: 66px; }
       .route-stage .route-card { min-height: 150px; }
-      .route-stage:nth-child(odd) .route-card::after,.route-stage:nth-child(even) .route-card::after { left: -17px; right: auto; border-left: 0; border-right: 17px solid var(--paper); }
+      .route-stage.side-left .route-card::after,.route-stage.side-right .route-card::after { left: -17px; right: auto; border-left: 0; border-right: 17px solid var(--paper); }
+      .route-visual { width: calc(100% - 76px); margin-left: 76px; border-width: 5px; }
     }
     @media (prefers-reduced-motion: reduce) { html{scroll-behavior:auto}.route-marker.current{animation:none}.btn{transition:none} }
     @media print {
@@ -756,6 +764,33 @@
       }
     ];
 
+    const ROUTE_VISUALS = {
+      2: {
+        src: "assets/route-systems.webp",
+        alt: "A400M in a maintenance hangar while an engineering team reviews a life-cycle planning table",
+        title: "Systems and life-cycle waypoint",
+        caption: "Design decisions, maintenance capability and operational reality belong to the same system."
+      },
+      4: {
+        src: "assets/route-circularity.webp",
+        alt: "Aerospace avionics, repairable mechanical part and modular composite panel on an inspection workbench with a Eurofighter in the background",
+        title: "Circular value waypoint",
+        caption: "Inspect, maintain, repair and retain value before moving to lower-value recovery routes."
+      },
+      6: {
+        src: "assets/route-operations.webp",
+        alt: "A400M on an operational apron beside a runway, managed grassland, drainage and a separate natural habitat area",
+        title: "Operations and territory waypoint",
+        caption: "Readiness, flight safety, land management and ecological context must be managed together."
+      },
+      8: {
+        src: "assets/route-evidence.webp",
+        alt: "Aerospace team examining a component and life-cycle evidence with a Eurofighter and A400M visible outside",
+        title: "Evidence and decision waypoint",
+        caption: "A credible recommendation connects technical constraints, life-cycle evidence, controls and review triggers."
+      }
+    };
+
     const FINAL_QUESTIONS = [
       {q:"What should be defined before comparing the sustainability of alternatives?",options:["A common functional requirement and assessment boundary.","The preferred communications headline.","A single universal indicator."],correct:0},
       {q:"What does burden shifting mean?",options:["Moving an apparent improvement into another life-cycle stage or impact category.","Changing the project manager.","Using more than one supplier."],correct:0},
@@ -844,7 +879,8 @@
                 const current = unlocked && !complete;
                 const status = complete ? "Completed" : current ? "Current stop" : "Locked — complete the previous stop";
                 const cls = complete ? "complete" : current ? "current" : "locked";
-                return `<div class="route-stage">
+                const visual = ROUTE_VISUALS[m.id];
+                return `<div class="route-stage ${m.id%2?"side-left":"side-right"}">
                   <article class="route-card ${cls}">
                     <span class="route-status ${cls}">${status}</span>
                     <h3>Stop ${m.id} · ${escapeHtml(m.title)}</h3>
@@ -853,9 +889,9 @@
                     <button class="btn ${current?"btn-primary":""}" type="button" ${unlocked?`data-go="module-${m.id}"`:"disabled"}>${complete?"Review stop":current?"Enter current stop":"Locked"}</button>
                   </article>
                   <div class="route-marker ${cls}" aria-hidden="true">${complete?"✓":current?String(m.id).padStart(2,"0"):"🔒"}</div>
-                </div>`;
+                </div>${visual?`<figure class="route-visual"><img src="${visual.src}" alt="${escapeHtml(visual.alt)}" loading="lazy" decoding="async"><figcaption><strong>${escapeHtml(visual.title)}</strong>${escapeHtml(visual.caption)}</figcaption></figure>`:""}`;
               }).join("")}
-              <div class="route-stage route-destination">
+              <div class="route-stage route-destination side-left">
                 <article class="route-card ${state.completed.length===MODULES.length?(state.passed?"complete":"current"):"locked"}">
                   <span class="route-status ${state.passed?"complete":state.completed.length===MODULES.length?"current":"locked"}">${state.passed?"Journey completed":state.completed.length===MODULES.length?"Final destination unlocked":"Locked — complete all stops"}</span>
                   <h3>Final destination · Integrated assessment</h3>
