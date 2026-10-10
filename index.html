@@ -302,7 +302,6 @@
         id: 1,
         title: "Sustainability as a decision system",
         subtitle: "Move beyond isolated indicators and understand how environmental, operational, social and economic consequences interact.",
-        duration: "30 min",
         objectives: [
           "Distinguish sustainability from a collection of environmental initiatives.",
           "Use impacts, dependencies, risks and opportunities as four complementary decision lenses.",
@@ -360,7 +359,6 @@
         id: 2,
         title: "Life-cycle thinking for aircraft and services",
         subtitle: "Understand where impacts occur from design and sourcing to operation, support and end-of-life.",
-        duration: "35 min",
         objectives: [
           "Map the principal stages of an aircraft or service life cycle.",
           "Explain functional unit, baseline, data quality and burden shifting in plain language.",
@@ -418,7 +416,6 @@
         id: 3,
         title: "Circularity, maintenance and retained value",
         subtitle: "Connect repair, reuse, modularity and obsolescence management with airworthiness and long-term capability.",
-        duration: "30 min",
         objectives: [
           "Use the value-retention hierarchy instead of treating recycling as the default circular strategy.",
           "Recognise the technical and documentary conditions required for safe reuse and repair.",
@@ -476,7 +473,6 @@
         id: 4,
         title: "Responsible materials and supply-chain evidence",
         subtitle: "Turn supplier claims into traceable information that can support engineering and procurement decisions.",
-        duration: "35 min",
         objectives: [
           "Differentiate a supplier statement from verifiable chain-of-custody evidence.",
           "Apply proportional due diligence to material, geographic and supplier risk.",
@@ -534,7 +530,6 @@
         id: 5,
         title: "Nature, land and operational coexistence",
         subtitle: "Understand ecological dependencies and manage wildlife, habitat and land-use interactions without weakening operational safety.",
-        duration: "35 min",
         objectives: [
           "Explain why biological diversity matters to operational resilience and land management.",
           "Apply the mitigation hierarchy to base and infrastructure decisions.",
@@ -592,7 +587,6 @@
         id: 6,
         title: "In-service operations, readiness and resilience",
         subtitle: "Examine where mission readiness and sustainability reinforce one another—and where transparent trade-offs remain.",
-        duration: "35 min",
         objectives: [
           "Connect reliability, repair capability and logistics design with long-term resource performance.",
           "Differentiate emergency exceptions from weak routine planning.",
@@ -650,7 +644,6 @@
         id: 7,
         title: "Measurement, governance and credible communication",
         subtitle: "Build claims from clear boundaries, accountable controls and evidence that can survive review.",
-        duration: "35 min",
         objectives: [
           "Select indicators that connect action, outcome and decision relevance.",
           "Recognise common forms of misleading sustainability communication.",
@@ -708,7 +701,6 @@
         id: 8,
         title: "Integrated aviation decision lab",
         subtitle: "Combine the course lenses in a structured recommendation for a realistic engineering and support decision.",
-        duration: "40 min",
         objectives: [
           "Apply a repeatable six-step decision framework.",
           "Separate non-negotiable constraints from variables that can be optimised.",
@@ -848,7 +840,7 @@
                 <div class="fact"><strong>8</strong><span>theory modules</span></div>
                 <div class="fact"><strong>8</strong><span>aviation decisions</span></div>
                 <div class="fact"><strong>10</strong><span>final questions</span></div>
-                <div class="fact"><strong>4 h</strong><span>estimated learning time</span></div>
+                
               </div>
             </div>
           </section>
@@ -880,18 +872,18 @@
                 const status = complete ? "Completed" : current ? "Current stop" : "Locked — complete the previous stop";
                 const cls = complete ? "complete" : current ? "current" : "locked";
                 const visual = ROUTE_VISUALS[m.id];
-                return `<div class="route-stage ${m.id%2?"side-left":"side-right"}">
+                return `<div id="route-stage-${m.id}" class="route-stage ${m.id%2?"side-left":"side-right"}">
                   <article class="route-card ${cls}">
                     <span class="route-status ${cls}">${status}</span>
                     <h3>Stop ${m.id} · ${escapeHtml(m.title)}</h3>
                     <p>${escapeHtml(m.subtitle)}</p>
-                    <div class="module-meta"><span class="pill">${escapeHtml(m.duration)}</span><span class="pill">Theory + decision + checkpoint</span></div>
+                    <div class="module-meta"><span class="pill">Theory + decision + checkpoint</span></div>
                     <button class="btn ${current?"btn-primary":""}" type="button" ${unlocked?`data-go="module-${m.id}"`:"disabled"}>${complete?"Review stop":current?"Enter current stop":"Locked"}</button>
                   </article>
                   <div class="route-marker ${cls}" aria-hidden="true">${complete?"✓":current?String(m.id).padStart(2,"0"):"🔒"}</div>
                 </div>${visual?`<figure class="route-visual"><img src="${visual.src}" alt="${escapeHtml(visual.alt)}" loading="lazy" decoding="async"><figcaption><strong>${escapeHtml(visual.title)}</strong>${escapeHtml(visual.caption)}</figcaption></figure>`:""}`;
               }).join("")}
-              <div class="route-stage route-destination side-left">
+              <div id="route-stage-final" class="route-stage route-destination side-left">
                 <article class="route-card ${state.completed.length===MODULES.length?(state.passed?"complete":"current"):"locked"}">
                   <span class="route-status ${state.passed?"complete":state.completed.length===MODULES.length?"current":"locked"}">${state.passed?"Journey completed":state.completed.length===MODULES.length?"Final destination unlocked":"Locked — complete all stops"}</span>
                   <h3>Final destination · Integrated assessment</h3>
@@ -906,8 +898,14 @@
 
           <div class="notice"><strong>Use of scenarios:</strong> A400M and Eurofighter references are illustrative learning contexts. The course does not replace approved technical data, airworthiness decisions, operational procedures or corporate policy.</div>
         </div>`;
+      const targetStage = recentlyCompleted === null ? null : (recentlyCompleted < MODULES.length ? `route-stage-${recentlyCompleted+1}` : "route-stage-final");
       recentlyCompleted = null;
       bindCommon();
+      if (targetStage) {
+        requestAnimationFrame(() => {
+          document.getElementById(targetStage)?.scrollIntoView({behavior:"smooth",block:"center"});
+        });
+      }
     }
 
     function renderModule(id){
@@ -921,7 +919,7 @@
       document.getElementById("main").innerHTML = `
         <div class="container module-shell">
           <div class="module-top">
-            <div><span class="eyebrow">Module ${m.id} · ${escapeHtml(m.duration)}</span><h1>${escapeHtml(m.title)}</h1><p class="module-lead">${escapeHtml(m.subtitle)}</p></div>
+            <div><span class="eyebrow">Module ${m.id}</span><h1>${escapeHtml(m.title)}</h1><p class="module-lead">${escapeHtml(m.subtitle)}</p></div>
             <button class="btn" type="button" data-go="overview">Course map</button>
           </div>
           <div class="module-body">
